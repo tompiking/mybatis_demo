@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 上面第一行是xml的开始行。表明了xml的版本和字符编码。这一行是可以省略的 -->
+<!-- 下面两行是DTD的定义
+内部DTD：<!DOCTYPE RootElement [具体定义]> 
+私有外部DTD：<!DOCTYPE RootElement SYSTEM 具体url>
+公共外部DTD：<!DOCTYPE RootElement PUBLIC DTD名称[注册//组织//类型 标签//语言]
+        具体url>
+参考文献：http://blog.csdn.net/wenpengy/article/details/5943451-->
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+    	<!-- <typeAlias alias="TomStudent" type="com.qingke.mybatis.model.Student"/> -->
+    	<package name="com.qingke.mybatis.model" />
+    </typeAliases>
+    <environments default="development">
+        <environment id="development">
+            <!-- 所支持的事务类型不多，记住这个即可 -->
+            <transactionManager type="JDBC" />
+            <!-- 配置数据库连接信息 -->
+            <!-- 类型POOLED UNPOOLED JNDI -->
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver" />
+                <property name="url" value="jdbc:mysql://localhost:3306/student_data" />
+                <property name="username" value="root" />
+                <property name="password" value="root" />
+            </dataSource>
+        </environment>
+    </environments>
+    <!-- 注册userMapper.xml文件， 
+        userMapper.xml位于me.gacl.mapping这个包下，所以resource写成me/gacl/mapping/userMapper.xml-->
+    <mappers>
+        <mapper resource="com/qingke/mybatis/mapping/student.xml"/>
+        <mapper resource="com/qingke/mybatis/mapping/status.xml"/>
+    </mappers>
+    
+</configuration>

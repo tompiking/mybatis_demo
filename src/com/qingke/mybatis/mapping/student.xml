@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的
+例如namespace="me.gacl.mapping.userMapper"就是me.gacl.mapping(包名)+userMapper(userMapper.xml文件去除后缀)
+ -->
+<mapper namespace="com.qingke.mybatis.mapping.student">
+    <!-- 在select标签中编写查询的SQL语句， 设置select标签的id属性为getUser，id属性值必须是唯一的，不能够重复
+    使用parameterType属性指明查询时使用的参数类型，resultType属性指明查询返回的结果集类型
+    resultType="me.gacl.domain.User"就表示将查询结果封装成一个User类的对象返回
+    User类就是users表所对应的实体类
+    -->
+    <!-- 
+        根据id查询得到一个user对象
+     -->
+  <!-- <resultMap id="BaseResultMap" type="test.test1.mybatis.pojo.User" >
+    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+  </resultMap>
+   
+    <select id="getAllUsers" 
+        resultMap="BaseResultMap">
+        select * from `user`
+    </select>
+    
+    <select id="getUserById" parameterType="int" resultMap="BaseResultMap">
+    	select * from `user` where user_id = #{uid}
+    </select>
+    -->
+    <insert id="createStudent" parameterType="Tom" keyProperty="id" useGeneratedKeys="true">
+    	insert into student (id,sid,firstname,lastname,gender,email,date_of_birth,student_status_id) values(#{id},#{sid},#{first},#{last},#{gender},#{email},#{date_of_birth},#{student_status_id})
+    </insert>
+    
+    <delete id="deleteStudent" parameterType="String">
+    	delete from student where firstname=#{first}
+    </delete>
+    
+    <update id="updateStudent" parameterType="Tom">
+    	update student set firstname=#{first} where id=#{id}
+    </update>
+    
+    <select id="selectOneStudent" resultType="hashmap" parameterType="int">
+    	select * from student where id=#{id}
+    </select>
+    
+    <select id="selectAllStudent" resultType="Tom">
+    	select * from student
+    </select>
+    
+  <resultMap id="ResultMap" type="Tom" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="firstname" property="first" jdbcType="VARCHAR" />
+    <result column="lastname" property="last" jdbcType="VARCHAR" />
+    <result column="student_status_id" property="student_status_id" jdbcType="INTEGER" />
+  	<association property="status" column="student_status_id" 
+  				 javaType="status" 
+  				 select="status.getStatusById" />
+  </resultMap>
+   <sql id="selectColumn">id,lastname</sql>
+   <sql id="selectColumn2">${alias}.id,${alias}.lastname</sql>
+    <select id="getAllStudentById" 
+        resultMap="ResultMap" parameterType="int">
+        select * from `student` where id=#{id}
+    </select>
+    
+    <select id="getColumnAllStudentById" 
+        resultMap="ResultMap" parameterType="int">
+        select <include refid="selectColumn"></include> from `student` where id=#{id}
+    </select>
+    
+    <select id="getAllStudent" resultMap="ResultMap">
+    	select * from `student`
+    </select>
+    
+    <select id="getAllStudentByStatusId" 
+        resultMap="ResultMap" parameterType="Tom">
+        select * from `student` where student_status_id=#{student_status_id}
+    </select>
+    
+    <select id="getColumn2AllStudentById" 
+        resultMap="ResultMap" parameterType="Tom">
+        select <include refid="selectColumn2"><property name="alias" value="student" /></include> from `student` where id=#{id}
+    </select>
+    
+    <select id="getColumn3AllStudentById" 
+        resultMap="ResultMap" parameterType="Tom">
+        select * from `student`
+        <!-- <if test="id==4">
+         	where id=#{id}
+        </if>-->
+        
+        <!-- <choose>
+        	<when test="id >= 4">
+        		where id=4
+        	</when>
+        	<when test="id &lt; 4">
+        		where id=3
+        	</when>
+        	<otherwise>
+        		where 1=1
+        	</otherwise>
+        </choose>-->
+        
+        <!-- <where>
+	        <if test="id==4">
+	         	id=#{id}
+	        </if>
+	        <if test="id==2">
+	         	and id=#{id}
+	        </if>
+	     </where>-->
+	     
+	     <trim prefix="where" prefixOverrides="AND|OR">
+	     	<if test="id==4">
+	         	id=#{id}
+	        </if>
+	        <if test="id==2">
+	         	and id=#{id}
+	        </if>
+	     </trim>
+    </select>
+    
+    <update id="updateStudent2" parameterType="Tom">
+    	update student 
+    	<!-- <set>
+    		lastname=#{last},firstname=#{first},
+    	</set>-->
+    	<trim prefix="set" suffixOverrides=",">
+    		lastname=#{last},firstname=#{first},
+    	</trim>
+    	where id=#{id}
+    </update>
+    
+    <select id="getAllStudentIn" resultMap="ResultMap" parameterType="List">
+    	select * from `student` where id in 
+    	<foreach collection="list" 
+    			 item="value" 
+    			 index="i" 
+    			 open="(" 
+    			 close=")" 
+    			 separator=",">
+    			 #{value}
+    	</foreach>
+    </select>
+</mapper>
